@@ -139,9 +139,11 @@ const golfCardGame = {
             console.log(
               `${this.currentPlayer} drew card from discard pile: ${drawnCardFromDiscardPile}`
             );
+            this.currentPlayer =
+              this.currentPlayer === this.userOne ? this.userTwo : this.userOne;
+            console.log(`Now it's ${this.currentPlayer}'s turn`);
           }
           break;
-
         default:
           console.log("Invalid choice, try again.");
       }
