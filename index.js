@@ -5,7 +5,7 @@ const golfCardGame = {
   userTwoHand: [],
   deck: [],
   discardPile: [],
-  currentPlayer: this.userOne,
+  currentPlayer: null,
   isFaceUp: false,
   isGameOver: false,
 
@@ -59,5 +59,7 @@ const golfCardGame = {
     this.shuffleDeck();
     this.dealCards();
     this.discardPileCards();
+
+    this.currentPlayer = this.userOne;
   },
 };
