@@ -1,9 +1,3 @@
-const readline = require("node:readline");
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
 const golfCardGame = {
   userOne: "",
   userTwo: "",
@@ -11,12 +5,13 @@ const golfCardGame = {
   userTwoHand: [],
   deck: [],
   discardPile: [],
-  currentPlayer: "",
+  currentPlayer: this.userOne,
+  isFaceUp: false,
   isGameOver: false,
 
   createDeck() {
     const values = [
-      "Ace",
+      "A",
       "2",
       "3",
       "4",
@@ -26,23 +21,27 @@ const golfCardGame = {
       "8",
       "9",
       "10",
-      "Jack",
-      "Queen",
-      "King",
+      "J",
+      "Q",
+      "K",
     ];
-    const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+    const suits = ["h", "d", "c", "s"];
 
     for (let value of values) {
       for (let suit of suits) {
-        this.deck.push({ value, suit });
+        this.deck.push(`${value}${suit}`);
       }
     }
   },
 
   shuffleDeck() {
-    for (let i = this.deck.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
+    for (let i = 0; i < 5000; i++) {
+      let indexOne = Math.floor(Math.random() * this.deck.length);
+      let indexTwo = Math.floor(Math.random() * this.deck.length);
+      [this.deck[indexOne], this.deck[indexTwo]] = [
+        this.deck[indexTwo],
+        this.deck[indexOne],
+      ];
     }
   },
 
@@ -54,4 +53,15 @@ const golfCardGame = {
   discardPileCards() {
     this.discardPile.push(this.deck.pop());
   },
+
+  startGame() {
+    this.createDeck();
+    this.shuffleDeck();
+    this.dealCards();
+    this.discardPileCards();
+  },
 };
+
+golfCardGame.startGame();
+console.log(golfCardGame.deck);
+console.log(golfCardGame.deck.length);
