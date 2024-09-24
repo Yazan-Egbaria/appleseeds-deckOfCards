@@ -61,7 +61,3 @@ const golfCardGame = {
     this.discardPileCards();
   },
 };
-
-golfCardGame.startGame();
-console.log(golfCardGame.deck);
-console.log(golfCardGame.deck.length);
