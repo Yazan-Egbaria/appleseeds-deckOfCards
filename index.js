@@ -27,11 +27,11 @@ const golfCardGame = {
       "Q",
       "K",
     ];
-    const suits = ["h", "d", "c", "s"];
+    const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
 
     for (let value of values) {
       for (let suit of suits) {
-        this.deck.push(`${value}${suit}`);
+        this.deck.push(` ${value} of ${suit} `);
       }
     }
   },
@@ -48,8 +48,8 @@ const golfCardGame = {
   },
 
   dealCards() {
-    this.userOneHand = this.deck.splice(0, 4);
-    this.userTwoHand = this.deck.splice(0, 4);
+    this.userOneHand = this.deck.splice(0, 4).map(card => ({value:card , faceUp: false}));
+    this.userTwoHand = this.deck.splice(0, 4).map(card => ({value:card , faceUp: false}));
   },
 
   discardPileCards() {
@@ -61,88 +61,86 @@ const golfCardGame = {
     this.shuffleDeck();
     this.dealCards();
     this.discardPileCards();
-
     this.currentPlayer = this.userOne;
+    this.currentPlayerHand = this.userOneHand;
+  },
+
+  displayHand(hand) {
+    return hand.map(card => {
+      return card.faceUp ? card.value : "Face Down";
+    }).join(", ");
   },
 
   drawFromCards() {
     while (this.isGameOver === false) {
-      const takeAction = readlineSync.question(
-        `1- Draw from cards deck || 2- Draw from discard pile `
-      );
+      console.log(`${this.currentPlayer} Turn:`);
+      const takeAction = readlineSync.question(`1- Draw from deck || 2- Draw from discard pile `);
+
+      // DRAW FROM DECK SWITCH ACTION
       switch (takeAction) {
         case "1":
           const drawnCardFromDeck = this.deck.pop();
-          console.log(
-            `${this.currentPlayer} drew card from cards pile: ${drawnCardFromDeck}`
-          );
-          const takeActionDrawnCardFromDeck = readlineSync.question(
-            `1- Throw it the discard pile || 2- Replace card with another card in your hand `
-          );
+          console.log(`${this.currentPlayer} drew card from the deck: ${drawnCardFromDeck}`);
+
+          const takeActionDrawnCardFromDeck = readlineSync.question(`1- Throw it to the discard pile || 2- Replace card with another card in your hand `);
           switch (takeActionDrawnCardFromDeck) {
             case "1":
-              console.log(
-                `${this.currentPlayer} threw the card ${drawnCardFromDeck} to the discard pile`
-              );
+              console.log(`${this.currentPlayer} threw the card ${drawnCardFromDeck} to the discard pile`);
+              this.discardPile.push(drawnCardFromDeck);
               break;
+
             case "2":
-              const takeActionReplaceCard = readlineSync.question(
-                `Which card you want to replace? ${this.userOneHand[0]}, ${this.userOneHand[1]}, ${this.userOneHand[2]}, ${this.userOneHand[3]} `
-              );
-              switch (takeActionReplaceCard) {
-                case "1":
-                  console.log(
-                    `${this.currentPlayer} replaced the card ${drawnCardFromDeck} with ${this.userOneHand[0]}`
-                  );
-                  this.userOneHand[0] === drawnCardFromDeck;
-                  break;
-                case "2":
-                  console.log(
-                    `${this.currentPlayer} replaced the card ${drawnCardFromDeck} with ${this.userOneHand[1]}`
-                  );
-                  this.userOneHand[1] === drawnCardFromDeck;
-                  break;
-                case "3":
-                  console.log(
-                    `${this.currentPlayer} replaced the card ${drawnCardFromDeck} with ${this.userOneHand[2]}`
-                  );
-                  this.userOneHand[2] === drawnCardFromDeck;
-
-                  break;
-                case "4":
-                  console.log(
-                    `${this.currentPlayer} replaced the card ${drawnCardFromDeck} with ${this.userOneHand[3]}`
-                  );
-                  this.userOneHand[3] === drawnCardFromDeck;
-
-                  break;
-
-                default:
+              const replaceCard = (currentPlayerHand) => {
+                const takeActionReplaceCard = readlineSync.question(`Which card do you want to replace? ${this.displayHand(currentPlayerHand)} `);
+                const replacedCard = parseInt(takeActionReplaceCard) - 1;
+                if (replacedCard >= 0 && replacedCard < currentPlayerHand.length) {
+                  if (!currentPlayerHand[replacedCard].faceUp) {
+                    currentPlayerHand[replacedCard].faceUp = true;
+                  }
+                  console.log(`${this.currentPlayer} replaced the card ${drawnCardFromDeck} with ${currentPlayerHand[replacedCard].value}`);
+                  currentPlayerHand[replacedCard].value = drawnCardFromDeck;
+                } else {
                   console.log("Invalid choice, try again.");
-              }
+                  replaceCard(currentPlayerHand);
+                }
+              };
+              replaceCard(this.currentPlayerHand);
               break;
             default:
               console.log("Invalid choice, try again.");
           }
-          this.currentPlayer =
-            this.currentPlayer === this.userOne ? this.userTwo : this.userOne;
+          this.currentPlayer = this.currentPlayer === this.userOne ? this.userTwo : this.userOne;
+          this.currentPlayerHand = this.currentPlayerHand === this.userOneHand ? this.userTwoHand : this.userOneHand;
           console.log(`Now it's ${this.currentPlayer}'s turn`);
           break;
 
+        // DRAW FROM DISCARD PILE SWITCH ACTION
         case "2":
           if (this.discardPile.length === 0) {
-            console.log(
-              "There is no cards in discard pile, you will have to draw card from deck"
-            );
+            console.log("There is no cards in discard pile, you will have to draw card from deck");
           } else {
             const drawnCardFromDiscardPile = this.discardPile.pop();
-            console.log(
-              `${this.currentPlayer} drew card from discard pile: ${drawnCardFromDiscardPile}`
-            );
-            this.currentPlayer =
-              this.currentPlayer === this.userOne ? this.userTwo : this.userOne;
-            console.log(`Now it's ${this.currentPlayer}'s turn`);
-          }
+            console.log(`${this.currentPlayer} drew card from discard pile: ${drawnCardFromDiscardPile}`);
+
+            const replaceCard = (currentPlayerHand) => {
+              const takeActionReplaceCard = readlineSync.question(`Which card do you want to replace? ${this.displayHand(currentPlayerHand)} `);
+              const replacedCard = parseInt(takeActionReplaceCard) - 1;
+              if (replacedCard >= 0 && replacedCard < currentPlayerHand.length) {
+                if (!currentPlayerHand[replacedCard].faceUp) {
+                    currentPlayerHand[replacedCard].faceUp = true;
+                }
+                console.log(`${this.currentPlayer} replaced the card ${drawnCardFromDiscardPile} with ${currentPlayerHand[replacedCard].value}`);
+                currentPlayerHand[replacedCard].value = drawnCardFromDiscardPile;
+                } else {
+                  console.log("Invalid choice, try again.");
+                  replaceCard(currentPlayerHand);
+                }
+              };
+            replaceCard(this.currentPlayerHand);
+            }
+          this.currentPlayer = this.currentPlayer === this.userOne ? this.userTwo : this.userOne;
+          this.currentPlayerHand = this.currentPlayerHand === this.userOneHand ? this.userTwoHand : this.userOneHand;
+          console.log(`Now it's ${this.currentPlayer}'s turn`);
           break;
         default:
           console.log("Invalid choice, try again.");
