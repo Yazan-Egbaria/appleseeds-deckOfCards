@@ -35,8 +35,9 @@ discardPile: [],
 userOneHand: [],
 userTwoHand: [],
 currentPlayer: userOne,
-isFaceUp: false;
 isGameOver: false,
+this.currentPlayer = this.userOne;
+this.currentPlayerHand = this.userOneHand;
 }
 
 ## Game Features
@@ -50,15 +51,21 @@ isGameOver: false,
   deal 4 cards for each player face down, and pop them out from the main deck
 - create a discard pile -V
   at the very beginning pop one card from the main deck and push it to the discard pile
-- start game
+- start game -V
   everything is ready, time to start the game
 
 2- Player Turn:
 
 - draw from cards
-  player will draw 1 card from the cards and will have two options: 1) throw it to the dicard pile 2) replace 1 card in his hand and flip it face up
-- draw from pile
-  player will draw from the pile and replace 1 card in his hand and flip it face up
+  if he drew card from the deck, it will notify him which card he drew, and the deck will decrease count by 1, then will have two options:
+  - throw it to the dicard pile -V
+    - if he throws it to the discard pile, the discard pile will increase by 1 -V
+  - replace 1 card in his hand
+    - he replaces it with one in his hand, and it will flip face up
+
+- draw from pile -V
+  - if there is no cards in the discard pile, it will tell him that there is no cards -V
+  - if he drew card from the discard pile, it will notify him which card he drew, then replace it with one in his hands and flip it face up, then switch turns -V
 
 3- End Game:
 
