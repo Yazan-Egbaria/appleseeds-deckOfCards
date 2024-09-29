@@ -60,8 +60,8 @@ this.currentPlayerHand = this.userOneHand;
   if he drew card from the deck, it will notify him which card he drew, and the deck will decrease count by 1, then will have two options:
   - throw it to the dicard pile -V
     - if he throws it to the discard pile, the discard pile will increase by 1 -V
-  - replace 1 card in his hand
-    - he replaces it with one in his hand, and it will flip face up
+  - replace 1 card in his hand -V
+    - he replaces it with one in his hand, and it will flip face up -V
 
 - draw from pile -V
   - if there is no cards in the discard pile, it will tell him that there is no cards -V
@@ -69,6 +69,6 @@ this.currentPlayerHand = this.userOneHand;
 
 3- End Game:
 
-- if one player has all the 4 cards face up, flip all the cards face up
-- calculate the score for each player
-- the one with the lowest score wins
+- if one player has all the 4 cards face up, flip all the cards face up -V
+- calculate the score for each player -V
+- the one with the lowest score wins -V
